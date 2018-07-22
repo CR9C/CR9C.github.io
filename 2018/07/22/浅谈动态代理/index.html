@@ -87,14 +87,14 @@
 <meta property="og:site_name" content="cl&#39;s blog">
 <meta property="og:description" content="浅谈JDK动态代理: 首先看看java运行机制:如下图  如源文件为Hello.java,编译之后是Hello.class,程序要运行把该字节码要加载进虚拟机,通过ClassLoader加载(以二进制流的方式),在java虚拟机中通过Java解释器或者即时编译器进行运行,而java虚拟机基于操作系统之上,操作系统基于硬件之上  静态代理：在程序运行前就已经存在代理类的字节码文件，代理对象和真实对象">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://github.com/CR9C/img-folder/blob/master/java%E8%BF%90%E8%A1%8C.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/22/浅谈动态代理/java运行.png">
 <meta property="og:image" content="http://yoursite.com/2018/07/22/浅谈动态代理/images/动态原理%20.png">
-<meta property="og:image" content="c:/Users/Administrator/Desktop/Snipaste_2018-07-22_09-05-47.png">
-<meta property="og:updated_time" content="2018-07-22T02:32:34.370Z">
+<meta property="og:image" content="http://yoursite.com/2018/07/22/浅谈动态代理/C:/Users/Administrator/Desktop/Snipaste_2018-07-22_09-05-47.png">
+<meta property="og:updated_time" content="2018-07-22T02:44:26.682Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈JDK动态代理">
 <meta name="twitter:description" content="浅谈JDK动态代理: 首先看看java运行机制:如下图  如源文件为Hello.java,编译之后是Hello.class,程序要运行把该字节码要加载进虚拟机,通过ClassLoader加载(以二进制流的方式),在java虚拟机中通过Java解释器或者即时编译器进行运行,而java虚拟机基于操作系统之上,操作系统基于硬件之上  静态代理：在程序运行前就已经存在代理类的字节码文件，代理对象和真实对象">
-<meta name="twitter:image" content="https://github.com/CR9C/img-folder/blob/master/java%E8%BF%90%E8%A1%8C.png">
+<meta name="twitter:image" content="http://yoursite.com/2018/07/22/浅谈动态代理/java运行.png">
 
 
 
@@ -405,7 +405,7 @@
       
         <p>浅谈JDK动态代理:</p>
 <p>首先看看java运行机制:如下图</p>
-<p><img src="https://github.com/CR9C/img-folder/blob/master/java%E8%BF%90%E8%A1%8C.png" alt="java"></p>
+<p><img src="/2018/07/22/浅谈动态代理/java运行.png" alt=""></p>
 <p>如源文件为Hello.java,编译之后是Hello.class,程序要运行把该字节码要加载进虚拟机,通过ClassLoader加载(以二进制流的方式),在java虚拟机中通过Java解释器或者即时编译器进行运行,而java虚拟机基于操作系统之上,操作系统基于硬件之上 </p>
 <p>静态代理：在程序运行前就已经存在代理类的字节码文件，代理对象和真实对象的关系在运行前就确定了。 </p>
 <p>静态代理:EmployeeServiceProxy.java编译之后产生EmployeeServiceProxy.class文件,把这份字节码加载进虚拟机才能执行,我们绕开这两步,不要写java文件和字节码文件,我们写一个byte数组,写一个二进制流,就按照字节码文件的格式和结构写,通过类加载器加载进虚拟机,这样也能运行程序,省掉了图中左边这部分结构(左边是编译时期,右边是运行时期),这样就没有定义代理类了,这种就称为动态代理(不存在java文件和字节码文件). 动态代理：动态代理类是在程序运行期间由 JVM 通过反射等机制动态的生成的，所以不存在代理类的字节码文件，代理对象和真实对象的关系是在程序运行时期才确定的。</p>
@@ -419,9 +419,9 @@
 <p>EmployeeServiceProxy类也实现了IEmploService接口,在静态代理时,真实对象和代理对象都要实现代理接口,只不过现在代理类不是由我们来写,而是动态生成.该类的构造器中传入了InvocationHandler(增强对象)静态代码块是对外面的静态成员做赋值,分别有Object类中的equals,toString,hashCode,以及IEmployeeService类中的update和save,这5个方法就是被增强的方法.最关心的是save和update,下面就是具体怎么去做增强.update中的方法调用this.h.invoke,h是InvocationHandler,也就是说他生成的代理类也就调用invoke方法,这个invoke方法被TransactionManagerAdvice实现了,他传递的第一个参数是代理对象,this就是代理对象,继承了proxy,第二个就是当前被代理的方法save,第三个就是当前save的参数,底层还是调用TransactionManagerAdvice类中的invoke方法.这就是原理 </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">import java.lang.reflect.Method;</span><br><span class="line">import java.lang.reflect.Proxy;</span><br><span class="line">import java.util.Arrays;</span><br><span class="line"></span><br><span class="line">@SuppressWarnings(&quot;all&quot;)</span><br><span class="line">//事务的增强操作</span><br><span class="line">public class TransactionManagerAdvice implements java.lang.reflect.InvocationHandler &#123;</span><br><span class="line"></span><br><span class="line">	private Object target;//真实对象(对谁做增强)</span><br><span class="line">	private TransactionManager txManager;//事务管理器(模拟)</span><br><span class="line"></span><br><span class="line">	public void setTxManager(TransactionManager txManager) &#123;</span><br><span class="line">		this.txManager = txManager;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void setTarget(Object target) &#123;</span><br><span class="line">		this.target = target;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//创建一个代理对象</span><br><span class="line">	public &lt;T&gt; T getProxyObject() &#123;</span><br><span class="line">		return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(), //类加载器,一般跟上真实对象的类加载器</span><br><span class="line">				target.getClass().getInterfaces(), //真实对象所实现的接口(JDK动态代理必须要求真实对象有接口)</span><br><span class="line">				this);//如何做事务增强的对象</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//如何为真实对象的方法做增强的具体操作</span><br><span class="line">	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">		if (method.getName().startsWith(&quot;get&quot;) || method.getName().startsWith(&quot;list&quot;)) &#123;</span><br><span class="line">			return method.invoke(target, args);//放行</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		Object ret = null;</span><br><span class="line">		txManager.begin();</span><br><span class="line">		try &#123;</span><br><span class="line">			//---------------------------------------------------------------</span><br><span class="line">			ret = method.invoke(target, args);//调用真实对象的方法</span><br><span class="line">			//---------------------------------------------------------------</span><br><span class="line">			txManager.commit();</span><br><span class="line">		&#125; catch (Exception e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			txManager.rollback();</span><br><span class="line">		&#125;</span><br><span class="line">		return ret;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>此时就和我们静态代理时一样的,只不过此时静态代理类EmployeeServiceProxy不是由我们来创建的,生产字节码对应格式和结构的一个二进制数据加载进虚拟机通过动态的生成这个类.</p>
-<p><img src="images\动态原理 .png" alt=""></p>
+<p><img src="/2018/07/22/浅谈动态代理/images/动态原理 .png" alt=""></p>
 <p>动态代理原理图: </p>
-<p><img src="C:\Users\Administrator\Desktop\Snipaste_2018-07-22_09-05-47.png" alt=""></p>
+<p><img src="/2018/07/22/浅谈动态代理/C:/Users\Administrator\Desktop\Snipaste_2018-07-22_09-05-47.png" alt=""></p>
 <p>动态代理原理:</p>
 <p>在客户端先得到一个代理对象Proxy对象,通过代理对象调用方法proxy.save(..),其底层生成了一个代理类EmployeeServiceProxy,执行代码1.代理对象底层在执行invoke方法.invoke方法在TransactionManagerAdvice类中代码2.this.h.invoke把三个参数传过来,然后在这里开启事务,再调用真实对象的方法.</p>
 <p>其本质就是把save方法代码3做增强,包一层,再包一层.</p>
@@ -465,6 +465,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/22/nihao/" rel="prev" title="nihao">
+                nihao <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -536,7 +540,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
