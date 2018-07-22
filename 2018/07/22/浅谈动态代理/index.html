@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://github.com/CR9C/img-folder/blob/master/java%E8%BF%90%E8%A1%8C.png">
 <meta property="og:image" content="http://yoursite.com/2018/07/22/浅谈动态代理/images/动态原理%20.png">
 <meta property="og:image" content="c:/Users/Administrator/Desktop/Snipaste_2018-07-22_09-05-47.png">
-<meta property="og:updated_time" content="2018-07-22T02:05:08.113Z">
+<meta property="og:updated_time" content="2018-07-22T02:32:34.370Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈JDK动态代理">
 <meta name="twitter:description" content="浅谈JDK动态代理: 首先看看java运行机制:如下图  如源文件为Hello.java,编译之后是Hello.class,程序要运行把该字节码要加载进虚拟机,通过ClassLoader加载(以二进制流的方式),在java虚拟机中通过Java解释器或者即时编译器进行运行,而java虚拟机基于操作系统之上,操作系统基于硬件之上  静态代理：在程序运行前就已经存在代理类的字节码文件，代理对象和真实对象">
@@ -405,7 +405,7 @@
       
         <p>浅谈JDK动态代理:</p>
 <p>首先看看java运行机制:如下图</p>
-<p><img src="https://github.com/CR9C/img-folder/blob/master/java%E8%BF%90%E8%A1%8C.png" alt="java运行机制"></p>
+<p><img src="https://github.com/CR9C/img-folder/blob/master/java%E8%BF%90%E8%A1%8C.png" alt="java"></p>
 <p>如源文件为Hello.java,编译之后是Hello.class,程序要运行把该字节码要加载进虚拟机,通过ClassLoader加载(以二进制流的方式),在java虚拟机中通过Java解释器或者即时编译器进行运行,而java虚拟机基于操作系统之上,操作系统基于硬件之上 </p>
 <p>静态代理：在程序运行前就已经存在代理类的字节码文件，代理对象和真实对象的关系在运行前就确定了。 </p>
 <p>静态代理:EmployeeServiceProxy.java编译之后产生EmployeeServiceProxy.class文件,把这份字节码加载进虚拟机才能执行,我们绕开这两步,不要写java文件和字节码文件,我们写一个byte数组,写一个二进制流,就按照字节码文件的格式和结构写,通过类加载器加载进虚拟机,这样也能运行程序,省掉了图中左边这部分结构(左边是编译时期,右边是运行时期),这样就没有定义代理类了,这种就称为动态代理(不存在java文件和字节码文件). 动态代理：动态代理类是在程序运行期间由 JVM 通过反射等机制动态的生成的，所以不存在代理类的字节码文件，代理对象和真实对象的关系是在程序运行时期才确定的。</p>
