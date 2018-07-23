@@ -90,7 +90,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/07/22/浅谈动态代理/java运行.png">
 <meta property="og:image" content="http://yoursite.com/2018/07/22/浅谈动态代理/静态原理%20.png">
 <meta property="og:image" content="http://yoursite.com/2018/07/22/浅谈动态代理/动态原理%20.png">
-<meta property="og:updated_time" content="2018-07-22T02:48:26.793Z">
+<meta property="og:updated_time" content="2018-07-23T14:39:48.666Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈JDK动态代理">
 <meta name="twitter:description" content="浅谈JDK动态代理: 首先看看java运行机制:如下图  如源文件为Hello.java,编译之后是Hello.class,程序要运行把该字节码要加载进虚拟机,通过ClassLoader加载(以二进制流的方式),在java虚拟机中通过Java解释器或者即时编译器进行运行,而java虚拟机基于操作系统之上,操作系统基于硬件之上  静态代理：在程序运行前就已经存在代理类的字节码文件，代理对象和真实对象">
@@ -426,6 +426,12 @@
 <p>在客户端先得到一个代理对象Proxy对象,通过代理对象调用方法proxy.save(..),其底层生成了一个代理类EmployeeServiceProxy,执行代码1.代理对象底层在执行invoke方法.invoke方法在TransactionManagerAdvice类中代码2.this.h.invoke把三个参数传过来,然后在这里开启事务,再调用真实对象的方法.</p>
 <p>其本质就是把save方法代码3做增强,包一层,再包一层.</p>
 <p>在这里注意一个小细节:在TransactionManagerAdvice类中的invoke方法中打印proxy,会报栈溢出异常(StackOverflowError), 因为打印的是代理对象,打印对象底层是调用对象的toString方法.(在String类中).而toString方法也是需要被增强的.在这里相当于调用toString,又回来调用invoke方法.需要增强的方法都调用invoke方法.可以调用getClass方法,因为没有对getClass做增强,因为在Object类中,用final修饰,禁止子类覆盖. </p>
+<p>总结:</p>
+<p>JDK动态代理总结:</p>
+<p>1&gt; JAVA动态代理是使用java.lang.reflect包中的Proxy类与InvocationHandler接口这两个来完成的</p>
+<p>2&gt; 要使用JDK动态代理,委托类(真实类)必须要定义接口</p>
+<p>3&gt; JDK动态代理将会拦截所有public的方法(因为只能调用接口中定义的方法),这样即使在接口中增加了新的方法,不用修改代码也会被拦截.</p>
+<p>4&gt; 动态代理的最小单位是类(所有类中的方法都会被处理),如果只想拦截一部分方法,可以在invoke方法中对要执行的方法名进行判断.</p>
 
       
     </div>
