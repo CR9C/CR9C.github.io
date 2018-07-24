@@ -79,16 +79,22 @@
 
 
 
-<meta name="description" content="厚积薄发">
-<meta property="og:type" content="website">
+<meta name="description" content="事务(Transaction/tx): 是一系列操作组成的工作单元，该工作单元内的操作是不可分割的，即要么所有操作都做，要么所有 操作都不做，这就是事务。 事务必需满足 ACID（原子性、一致性、隔离性和持久性）特性，缺一不可：  原子性（Atomicity）：事务是不可分割的最小工作单元，事务内的操作要么全做，要么全不做；  一致性（Consistency）：在事务执行前数据库的数据处于正确的状">
+<meta property="og:type" content="article">
 <meta property="og:title" content="cl&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/categories/Spring/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/07/24/Spring事务浅析/index.html">
 <meta property="og:site_name" content="cl&#39;s blog">
-<meta property="og:description" content="厚积薄发">
+<meta property="og:description" content="事务(Transaction/tx): 是一系列操作组成的工作单元，该工作单元内的操作是不可分割的，即要么所有操作都做，要么所有 操作都不做，这就是事务。 事务必需满足 ACID（原子性、一致性、隔离性和持久性）特性，缺一不可：  原子性（Atomicity）：事务是不可分割的最小工作单元，事务内的操作要么全做，要么全不做；  一致性（Consistency）：在事务执行前数据库的数据处于正确的状">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2018/07/24/Spring事务浅析/数据库并发问题.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/24/Spring事务浅析/事务的隔离级别.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/24/Spring事务浅析/TransactionDefinition接口.png">
+<meta property="og:image" content="http://yoursite.com/2018/07/24/Spring事务浅析/事务的传播规则.png">
+<meta property="og:updated_time" content="2018-07-24T16:08:42.690Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="cl&#39;s blog">
-<meta name="twitter:description" content="厚积薄发">
+<meta name="twitter:description" content="事务(Transaction/tx): 是一系列操作组成的工作单元，该工作单元内的操作是不可分割的，即要么所有操作都做，要么所有 操作都不做，这就是事务。 事务必需满足 ACID（原子性、一致性、隔离性和持久性）特性，缺一不可：  原子性（Atomicity）：事务是不可分割的最小工作单元，事务内的操作要么全做，要么全不做；  一致性（Consistency）：在事务执行前数据库的数据处于正确的状">
+<meta name="twitter:image" content="http://yoursite.com/2018/07/24/Spring事务浅析/数据库并发问题.png">
 
 
 
@@ -118,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/Spring/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/24/Spring事务浅析/"/>
 
 
 
 
 
-  <title>分类: Spring | cl's blog</title>
+  <title> | cl's blog</title>
   
 
 
@@ -143,7 +149,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -281,83 +287,272 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block category">
+  <div id="posts" class="posts-expand">
+    
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>Spring<small>分类</small>
-        </h1>
-      </div>
+  
 
-      
-        
+  
+  
+  
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/24/Spring事务浅析/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cl">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/cc.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="cl's blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2018/07/22/浅谈动态代理/" itemprop="url">
-              
-                <span itemprop="name">浅谈JDK动态代理</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-07-22T00:00:00+08:00"
-              content="2018-07-22" >
-          07-22
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-24T23:06:08+08:00">
+                2018-07-24
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/24/Spring事务浅析/" class="leancloud_visitors" data-flag-title="">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+	  
+	
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
+      
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+      
+        <p>事务(Transaction/tx): 是一系列操作组成的工作单元，该工作单元内的操作是不可分割的，即要么所有操作都做，要么所有</p>
+<p>操作都不做，这就是事务。</p>
+<p>事务必需满足 ACID（原子性、一致性、隔离性和持久性）特性，缺一不可：</p>
+<ul>
+<li><p>原子性（Atomicity）：事务是不可分割的最小工作单元，事务内的操作要么全做，要么全不做；</p>
+</li>
+<li><p>一致性（Consistency）：在事务执行前数据库的数据处于正确的状态，而事务执行完成后数据库的数</p>
+</li>
+</ul>
+<p>据依然处于正确的状态，<font color="#A52A2A" face="黑体">即数据完整性约束没有被破坏，如 A 给 B 转账，不论转账成功与否转账之后的 A 和 B 的账户总额和转账之前是相同的。</font> </p>
+<ul>
+<li>隔离性（Isolation）：当多个事务处于并发访问同一个数据库资源时，事务之间相互影响程度，不同</li>
+</ul>
+<p>的隔离级别决定了各个事务对数据资源访问的不同行为。</p>
+<ul>
+<li><p>持久性（Durability）：事务一旦执行成功，它对数据库的数据的改变是不可逆的。</p>
+<p>用红楼梦里的一句话来描述事务:一损俱损,是非常准确的.</p>
+<p>之前,学习过数据库,其中的存在数据库的并发问题,如图:</p>
+<p><img src="/2018/07/24/Spring事务浅析/数据库并发问题.png" alt=""></p>
+</li>
+</ul>
+<p>为了解决这些并发问题，需要通过数据库隔离级别来解决，在标准 SQL 规范中定义了四种隔离级别： </p>
+<p>READ UNCOMMITED &lt; READ COMMITED&lt;REPEATABLE READ&lt;SERIALIZABLE。 </p>
+<p>Oracle 支持 READ COMMITED（缺省）和 SERIALIZABLE。</p>
+<p>MySQL 支持 四种隔离级别，缺省为 REPEATABLE READ。</p>
+<p><img src="/2018/07/24/Spring事务浅析/事务的隔离级别.png" alt=""></p>
+<p>其中SERIALIZABLE就表示串行,就没有并发的概念了.(√表示可能出现的情况)</p>
+<font color="#A52A2A" face="黑体">默认情况下MySQL不会出现虚读.除非 select * from 表名 lock in share mode.<br><br>MySQL中锁基于索引机制,也不会出现第一类丢失更新.</font> 
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/06/24/SpringIoCMock/" itemprop="url">
-              
-                <span itemprop="name">SpringIoCMock</span>
-              
-            </a>
-        
-      </h2>
+<font color="#A52A2A" face="黑体">如何选用:</font> 
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2018-06-24T20:53:27+08:00"
-              content="2018-06-24" >
-          06-24
-        </time>
-      </div>
+<p>隔离级别越高，数据库事务并发执行性能越差，能处理的操作越少。</p>
+<p>因此在实际项目开发中为了考虑并发性能一般使用 READ COMMITED，它能避免丢失更新和脏读，尽管不</p>
+<p>可重复读和幻读不能避免，</p>
+<p>更多的情况下<font color="#A52A2A" face="黑体">使用悲观锁或乐观锁来解决。</font> 使用悲观锁或乐观锁来解决。</p>
+<ul>
+<li><p>悲观锁:数据库本身的一种锁,在查询后加上一个FOR UPDATE</p>
+</li>
+<li><p>乐观锁:在表中定义一个列,来表示每次修改的版本.每次修改的版本号都要加1.更改的时候也要经过版本号来进行更改.</p>
+<p>事务类型:</p>
+<p>1&gt; 本地事务和分布式事务： </p>
+<ul>
+<li><p>本地事务：就是普通事务，能保证单台数据库上的操作的 ACID，<font color="#A52A2A" face="黑体">被限定在一台数据库上；</font> </p>
+</li>
+<li><p>分布式事务：涉及多个数据库源的事务，即跨越多台同类或异类数据库的事务（由每台数据库的本地事务组成的），分布式事务旨在保证这些本地事务的所有操作的 ACID，使事务<font color="#A52A2A" face="黑体">可以跨越多台数据库；</font> </p>
+<p>2&gt; JDBC 事务和 JTA 事务： </p>
+<ul>
+<li>JDBC 事务：就是数据库事务类型中的本地事务，通过 Connection 对象的控制来管理事务； </li>
+<li>JTA 事务：JTA 指(Java Transaction API)，是 Java EE 数据库事务规范， JTA 只提供了事务管理接口，由应用程序服务器厂商提供实现，JTA 事务比 JDBC 更强大，支持分布式事务。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>3&gt;  编程式事务和声明式事务  </p>
+<ul>
+<li><p>编程式事务：通过编写代码来管理事务。 </p>
+</li>
+<li><p>声明式事务： 通过注解或 XML 配置来管理事务； </p>
+<font color="#A52A2A" face="黑体">Spring 事务管理 :</font> 
 
-    </header>
-  </article>
-
+<p>Spring 的事务管理主要包括 3 个接口：</p>
+<ul>
+<li><p>PlatformTransactionManager：根据 TransactionDefinition 提供的事务属性配置信息，创建事务。</p>
+<p><font color="#A52A2A" face="黑体">平台的事务管理器,是多种事务管理器的基类,涵盖了处理事务的方法</font> PlatformTransactionManager:提供了事务一些公用的的方法. </p>
+</li>
+<li><p>TransactionDefinition：封装事务的隔离级别和超时时间，是否为只读事务和事务的隔离级别和传播规则等事务属性。</p>
+</li>
+<li><p>TransactionStatus：封装了事务的具体运行状态。如是否是新开启事务，是否已经提交事务，设置当前事务为 rollback-only 等。</p>
+<ul>
+<li>PlatformTransactionManager:接口统一抽象处理事务操作相关的方法，是其他事务管理器的规范； </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>方法解释：</p>
+<p>1):TransactionStatus getTransaction(TransactionDefinition definition)：根据事务定义信息从事务</p>
+<p>环境中返回一个已存在的事务，或者创建一个新的事务。</p>
+<p>2):void commit(TransactionStatus status)：根据事务的状态提交事务，如果事务状态已经标识为</p>
+<p>rollback-only，该方法执行回滚事务的操作。</p>
+<p>3):void rollback(TransactionStatus status)：将事务回滚，当 commit 方法抛出异常时，rollback 会</p>
+<p>被隐式调用</p>
+<p>使用 Spring 管理事务的时候，首先得告诉 Spring 使用哪一个事务管理器</p>
+<p>常用的事务管理器：</p>
+<p>DataSourceTransactionManager：支持 JDBC,MyBatis ；</p>
+<p>HibernateTransactionManager：支持 Hibernate；</p>
+<ul>
+<li><p>TransactionDefinition：封装事务的隔离级别和超时时间，是否为只读事务和事务的隔离级别和传播规则</p>
+<p>等事务属性。</p>
+<p><img src="/2018/07/24/Spring事务浅析/TransactionDefinition接口.png" alt=""></p>
+</li>
+</ul>
+<p>事务隔离级别：用来解决并发事务时出现的问题：</p>
+<p>ISOLATION_DEFAULT：默认隔离级别，即使用底层数据库默认的隔离级别；</p>
+<p>ISOLATION_READ_UNCOMMITTED：未提交读；</p>
+<p>ISOLATION_READ_COMMITTED：提交读，一般情况下我们使用这个；</p>
+<p>ISOLATION_REPEATABLE_READ：可重复读；</p>
+<p>ISOLATION_SERIALIZABLE：序列化；</p>
+<p>事务传播规则（事务传播行为）： </p>
+<p>在一个事务方法中调用其他事务方法，此时事务该如何传播，按照什么规则传播，用谁的事务，还是都不用等等？更形象一点的:我是一个抽烟的人,我去你家是抽你的烟还是我的烟?就到底用谁的事务. </p>
+<p>事务是如何在这些方法间传播的，Spring 共支持 7 种传播行为：(如上图红色框中)</p>
+<p>例子:<img src="/2018/07/24/Spring事务浅析/事务的传播规则.png" alt=""></p>
+<p>情况一：遵从当前事务</p>
+<p>REQUIRED：必须存在事务，如果当前存在一个事务，则加入该事务，否则将新建一个事务 （缺省）。使用较多</p>
+<p>在aaa方法中调用bbb方法,如果aaa方法中已经有事务了,那么bbb方法中依然用bbb方法中的事务.如果aaa方法中没有事务,则在调用bbb时,bbb中新建一个事务. </p>
+<p>SUPPORTS：支持当前事务，如果当前存在事务,则使用该事务,否则,以非事务形式运行.</p>
+<p>如果当前存在事务就用,不存在就不用.在aaa中调用bbb,如果aaa中有事务,bbb就有,如果aaa中没有,bbb就不用事务. </p>
+<p>MANDATORY ： 必 须 有 事 务 ， 使 用 当 前 事 务 执 行 ， 如 果 当 前 没 有 事 务 ， 则 抛 出 异 常</p>
+<p>IllegalTransactionStateException(非法的事务状态异常)。</p>
+<p>情况二：不遵从当前事务</p>
+<p>REQUIRES_NEW：不管当前是否存在事务，每次都创建新的事务.使用较多</p>
+<p>NOT_SUPPORTRD ：以非事务方式执行，如果当前存在逻辑事务，就把当前事务暂停(挂起)，以非事务方式执行。</p>
+<p>在aaa中是有事务的,在调用bbb时,bbb不要事务,就把事务挂在那里不动,在把bbb调用完了又回到aaa的时候就继续拿之前的事务去用. </p>
+<p>NEVER：不支持事务，如果当前存在是事务，则抛出异常，IllegalTransactionStateException</p>
+<p>情况三：寄生事务（外部事务和寄生事务）</p>
+<p>NESTED ：寄生事务，如果当前存在事务，则在内部事务内执行，如果当前不存在事务，则创建一个新的</p>
+<p>事务，寄生事务使用数据库中的savePoint(保存点)来实现，即寄生事务回滚不影响外部事务，但外部事务回滚将导致寄生事务。</p>
+<p>DataSourceTransactionManager 默认支持，而 HibernateTransactionManager 默认不支持，需要手动开启。</p>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/22/浅谈动态代理/" rel="next" title="浅谈JDK动态代理">
+                <i class="fa fa-chevron-left"></i> 浅谈JDK动态代理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -365,6 +560,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -621,6 +820,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
