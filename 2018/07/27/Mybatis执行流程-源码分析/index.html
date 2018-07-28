@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最好用debug调试一步步执行 测试类 123456789101112@Testvoid test1() throws Exception &amp;#123;	InputStream in = Resources.getResourceAsStream(&amp;quot;mybatis-config.xml&amp;quot;);	SqlSessionFactoryBuilder builder = new SqlS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cl&#39;s blog">
+<meta property="og:url" content="http://yoursite.com/2018/07/27/Mybatis执行流程-源码分析/index.html">
+<meta property="og:site_name" content="cl&#39;s blog">
+<meta property="og:description" content="最好用debug调试一步步执行 测试类 123456789101112@Testvoid test1() throws Exception &amp;#123;	InputStream in = Resources.getResourceAsStream(&amp;quot;mybatis-config.xml&amp;quot;);	SqlSessionFactoryBuilder builder = new SqlS">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-07-28T10:07:49.316Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cl&#39;s blog">
+<meta name="twitter:description" content="最好用debug调试一步步执行 测试类 123456789101112@Testvoid test1() throws Exception &amp;#123;	InputStream in = Resources.getResourceAsStream(&amp;quot;mybatis-config.xml&amp;quot;);	SqlSessionFactoryBuilder builder = new SqlS">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/27/Mybatis执行流程-源码分析/"/>
+
+
+
+
+
+  <title> | cl's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">cl's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">小小猿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/27/Mybatis执行流程-源码分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="cl">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/cc.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="cl's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-27T23:06:09+08:00">
+                2018-07-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/27/Mybatis执行流程-源码分析/" class="leancloud_visitors" data-flag-title="">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+	  
+	
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最好用debug调试一步步执行</p>
+<p>测试类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">void test1() throws Exception &#123;</span><br><span class="line">	InputStream in = Resources.getResourceAsStream(&quot;mybatis-config.xml&quot;);</span><br><span class="line">	SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();</span><br><span class="line">	SqlSessionFactory factory = builder.build(in);</span><br><span class="line">	SqlSession session = factory.openSession();</span><br><span class="line">	UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line">	List&lt;Map&lt;String,Object&gt;&gt; list = mapper.listMap();</span><br><span class="line">	session.close();</span><br><span class="line">	for (Map&lt;String, Object&gt; map : list) &#123;</span><br><span class="line">		System.out.println(map);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>第一步:  首先先看SqlSessionFactory factory = builder.build(in);,即创建SqlSessionFactory 对象.</p>
+<p>SqlSessionFactoryBuilder类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public SqlSessionFactory build(InputStream inputStream) &#123;</span><br><span class="line">   //底层在调用这个方法</span><br><span class="line">   return build(inputStream, null, null);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>SqlSessionFactoryBuilder类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) &#123;</span><br><span class="line">  try &#123;</span><br><span class="line">    //创建一个XMLConfig构建器,就是xml配置的构建器</span><br><span class="line">    XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);</span><br><span class="line">    //又调用下面这个build方法.</span><br><span class="line">    return build(parser.parse());</span><br><span class="line">  &#125; catch (Exception e) &#123;</span><br><span class="line">    throw ExceptionFactory.wrapException(&quot;Error building SqlSession.&quot;, e);</span><br><span class="line">  &#125; finally &#123;</span><br><span class="line">    ErrorContext.instance().reset();</span><br><span class="line">    try &#123;</span><br><span class="line">      inputStream.close();</span><br><span class="line">    &#125; catch (IOException e) &#123;</span><br><span class="line">      // Intentionally ignore. Prefer previous error.</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SqlSessionFactoryBuilder类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public SqlSessionFactory build(Configuration config) &#123;</span><br><span class="line">  return new DefaultSqlSessionFactory(config);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建了一个 DefaultSqlSessionFactory对象,传了一个Configuration对象的参数.</p>
+<p>Configuration是一个全局的配置对象,封装了所有的配置信息.</p>
+<p>在这里看一下传的参数config,要看parser.parser()的底层</p>
+<p>XMLConfigBuilder类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public Configuration parse() &#123;</span><br><span class="line">  if (parsed) &#123;</span><br><span class="line">    throw new BuilderException(&quot;Each XMLConfigBuilder can only be used once.&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  parsed = true;</span><br><span class="line">  parseConfiguration(parser.evalNode(&quot;/configuration&quot;));</span><br><span class="line">  return configuration;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先先看是否有没有解析,第一次解析,设置为ture后,又调用parseConfiguration方法,解析配置.</p>
+<p>XMLConfigBuilder类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">private void parseConfiguration(XNode root) &#123;</span><br><span class="line">  try &#123;</span><br><span class="line">    //issue #117 read properties first</span><br><span class="line">    propertiesElement(root.evalNode(&quot;properties&quot;));</span><br><span class="line">    Properties settings = settingsAsProperties(root.evalNode(&quot;settings&quot;));</span><br><span class="line">    loadCustomVfs(settings);</span><br><span class="line">    typeAliasesElement(root.evalNode(&quot;typeAliases&quot;));</span><br><span class="line">    pluginElement(root.evalNode(&quot;plugins&quot;));</span><br><span class="line">    objectFactoryElement(root.evalNode(&quot;objectFactory&quot;));</span><br><span class="line">    objectWrapperFactoryElement(root.evalNode(&quot;objectWrapperFactory&quot;));</span><br><span class="line">    reflectorFactoryElement(root.evalNode(&quot;reflectorFactory&quot;));</span><br><span class="line">    settingsElement(settings);</span><br><span class="line">    // read it after objectFactory and objectWrapperFactory issue #631</span><br><span class="line">    environmentsElement(root.evalNode(&quot;environments&quot;));</span><br><span class="line">    databaseIdProviderElement(root.evalNode(&quot;databaseIdProvider&quot;));</span><br><span class="line">    typeHandlerElement(root.evalNode(&quot;typeHandlers&quot;));</span><br><span class="line">    mapperElement(root.evalNode(&quot;mappers&quot;));</span><br><span class="line">  &#125; catch (Exception e) &#123;</span><br><span class="line">    throw new BuilderException(&quot;Error parsing SQL Mapper Configuration. Cause: &quot; + e, e);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里就在读取我们全局配置文件(主配置文件)中的信息,执行一系列操作之后一层一层返回,最后返回一个Configuration对象,该对象拥有所有的配置.再返回,返回到了SQLSessionFactory对象.可以看出,表面上创建了一个SQLSessionFactory对象,同时还创建了一个全局的配置对象.</p>
+<p>第二步:SqlSession session = factory.openSession();</p>
+<p>接下来再看一下SqlSession对象session是怎么创建的?</p>
+<p>SqlSessionFactory接口的实现类–&gt;DefaultSqlSessionFactory类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public SqlSession openSession() &#123;</span><br><span class="line">  return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>DefaultSqlSessionFactory类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) &#123;</span><br><span class="line">  Transaction tx = null;</span><br><span class="line">  try &#123;</span><br><span class="line">    final Environment environment = configuration.getEnvironment();</span><br><span class="line">    final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);</span><br><span class="line">    tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);</span><br><span class="line">    final Executor executor = configuration.newExecutor(tx, execType);</span><br><span class="line">    return new DefaultSqlSession(configuration, executor, autoCommit);</span><br><span class="line">  &#125; catch (Exception e) &#123;</span><br><span class="line">    closeTransaction(tx); // may have fetched a connection so lets call close()</span><br><span class="line">    throw ExceptionFactory.wrapException(&quot;Error opening session.  Cause: &quot; + e, e);</span><br><span class="line">  &#125; finally &#123;</span><br><span class="line">    ErrorContext.instance().reset();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有个事务,其实也不能猜到每次都要开启一个新的事务,SqlSessionFactory每次创建都创建一个新的,每个SqlSeesionFactory都有一个新的事务.</p>
+<p>最后,它创建了一个DefaultSqlSession对象,用到了全局配置对象,Executor对象作为参数.</p>
+<p>Executor对象是一个执行器,MyBatis的调度中心,负责SQL生成和查询缓存维护.在创建SQLSession对象之前创建完成.</p>
+<p>在这里再看一下创建Executor对象的代码:</p>
+<p>Configration类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public Executor newExecutor(Transaction transaction, ExecutorType executorType) &#123;</span><br><span class="line">  executorType = executorType == null ? defaultExecutorType : executorType;</span><br><span class="line">  executorType = executorType == null ? ExecutorType.SIMPLE : executorType;</span><br><span class="line">  Executor executor;</span><br><span class="line">  if (ExecutorType.BATCH == executorType) &#123;</span><br><span class="line">    executor = new BatchExecutor(this, transaction);</span><br><span class="line">  &#125; else if (ExecutorType.REUSE == executorType) &#123;</span><br><span class="line">    executor = new ReuseExecutor(this, transaction);</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    executor = new SimpleExecutor(this, transaction);</span><br><span class="line">  &#125;</span><br><span class="line">  if (cacheEnabled) &#123;</span><br><span class="line">    executor = new CachingExecutor(executor);</span><br><span class="line">  &#125;</span><br><span class="line">  executor = (Executor) interceptorChain.pluginAll(executor);</span><br><span class="line">  return executor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里,它用到了一个CachingExecutor ,把默认的Executor对象executor包装起来了,</p>
+<p>用Executor的子类CachingExecutor包装了一个SIMPLE,这是一个带有二级缓存的执行器.先去二级缓存中去寻找是否有数据.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public Object pluginAll(Object target) &#123;</span><br><span class="line">  for (Interceptor interceptor : interceptors) &#123;</span><br><span class="line">    target = interceptor.plugin(target);</span><br><span class="line">  &#125;</span><br><span class="line">  return target;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其后有一个interceptorChain(拦截器链,多个拦截器的合称).其pluginAll方法是让每个拦截器调用plugin方法,相当于AOP,在做增强,包装.将executor做加强.然后就一步步返回到测试类中.</p>
+<p>这里就是加载全局配置文件,创建SqlSessionFactory,创建SqlSession的整个过程.</p>
+<p>第三步: UserMapper mapper = session.getMapper(UserMapper.class);</p>
+<p>再看mapper对象是如何创建的?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@SuppressWarnings(&quot;unchecked&quot;)</span><br><span class="line">public &lt;T&gt; T getMapper(Class&lt;T&gt; type, SqlSession sqlSession) &#123;</span><br><span class="line">  final MapperProxyFactory&lt;T&gt; mapperProxyFactory = (MapperProxyFactory&lt;T&gt;) knownMappers.get(type);</span><br><span class="line">  if (mapperProxyFactory == null) &#123;</span><br><span class="line">    throw new BindingException(&quot;Type &quot; + type + &quot; is not known to the MapperRegistry.&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  try &#123;</span><br><span class="line">    return mapperProxyFactory.newInstance(sqlSession);</span><br><span class="line">  &#125; catch (Exception e) &#123;</span><br><span class="line">    throw new BindingException(&quot;Error getting mapper instance. Cause: &quot; + e, e);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public T newInstance(SqlSession sqlSession) &#123;</span><br><span class="line">  final MapperProxy&lt;T&gt; mapperProxy = new MapperProxy&lt;&gt;(sqlSession, mapperInterface, methodCache);</span><br><span class="line">  return newInstance(mapperProxy);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先得到了一个MapperProxy对象,再调用newInstance方法.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@SuppressWarnings(&quot;unchecked&quot;)</span><br><span class="line">protected T newInstance(MapperProxy&lt;T&gt; mapperProxy) &#123;</span><br><span class="line">  return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] &#123; mapperInterface &#125;, mapperProxy);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过JDK的动态代理机制创建一个Mapper的代理对象.也就是说通过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UserMapper mapper = session.getMapper(UserMapper.class);</span><br></pre></td></tr></table></figure>
+<p>得到的也就是一个代理对象.</p>
+<p>其中MapperProxy类中的invoke方法是具体的怎么做增强.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">  try &#123;</span><br><span class="line">    if (Object.class.equals(method.getDeclaringClass())) &#123;</span><br><span class="line">      return method.invoke(this, args);</span><br><span class="line">    &#125; else if (isDefaultMethod(method)) &#123;</span><br><span class="line">      return invokeDefaultMethod(proxy, method, args);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; catch (Throwable t) &#123;</span><br><span class="line">    throw ExceptionUtil.unwrapThrowable(t);</span><br><span class="line">  &#125;</span><br><span class="line">  final MapperMethod mapperMethod = cachedMapperMethod(method);</span><br><span class="line">  return mapperMethod.execute(sqlSession, args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第四步: 接下来,我们具体看查询该怎么做?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Map&lt;String,Object&gt;&gt; list = mapper.listMap();</span><br></pre></td></tr></table></figure>
+<p>它底层会去调用MapperProxy类的invoke方法,即代理对象的invoke方法.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">  try &#123;</span><br><span class="line">    if (Object.class.equals(method.getDeclaringClass())) &#123;</span><br><span class="line">      return method.invoke(this, args);</span><br><span class="line">    &#125; else if (isDefaultMethod(method)) &#123;</span><br><span class="line">      return invokeDefaultMethod(proxy, method, args);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; catch (Throwable t) &#123;</span><br><span class="line">    throw ExceptionUtil.unwrapThrowable(t);</span><br><span class="line">  &#125;</span><br><span class="line">  final MapperMethod mapperMethod = cachedMapperMethod(method);</span><br><span class="line">  return mapperMethod.execute(sqlSession, args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它首先判断当前代理的方法listMap是不是Object类中的方法,如果是,就不做任何增强,直接执行.然后判断是不是默认方法,也不是.然后执行下面代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">final MapperMethod mapperMethod = cachedMapperMethod(method);</span><br><span class="line">return mapperMethod.execute(sqlSession, args);</span><br></pre></td></tr></table></figure>
+<p>其中,MapperMethod主要判断当前的方法是什么类型的方法.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">public Object execute(SqlSession sqlSession, Object[] args) &#123;</span><br><span class="line">  Object result;</span><br><span class="line">  switch (command.getType()) &#123;</span><br><span class="line">    case INSERT: &#123;</span><br><span class="line">  	Object param = method.convertArgsToSqlCommandParam(args);</span><br><span class="line">      result = rowCountResult(sqlSession.insert(command.getName(), param));</span><br><span class="line">      break;</span><br><span class="line">    &#125;</span><br><span class="line">    case UPDATE: &#123;</span><br><span class="line">      Object param = method.convertArgsToSqlCommandParam(args);</span><br><span class="line">      result = rowCountResult(sqlSession.update(command.getName(), param));</span><br><span class="line">      break;</span><br><span class="line">    &#125;</span><br><span class="line">    case DELETE: &#123;</span><br><span class="line">      Object param = method.convertArgsToSqlCommandParam(args);</span><br><span class="line">      result = rowCountResult(sqlSession.delete(command.getName(), param));</span><br><span class="line">      break;</span><br><span class="line">    &#125;</span><br><span class="line">    case SELECT:</span><br><span class="line">      if (method.returnsVoid() &amp;&amp; method.hasResultHandler()) &#123;</span><br><span class="line">        executeWithResultHandler(sqlSession, args);</span><br><span class="line">        result = null;</span><br><span class="line">      &#125; else if (method.returnsMany()) &#123;</span><br><span class="line">        result = executeForMany(sqlSession, args);</span><br><span class="line">      &#125; else if (method.returnsMap()) &#123;</span><br><span class="line">        result = executeForMap(sqlSession, args);</span><br><span class="line">      &#125; else if (method.returnsCursor()) &#123;</span><br><span class="line">        result = executeForCursor(sqlSession, args);</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        Object param = method.convertArgsToSqlCommandParam(args);</span><br><span class="line">        result = sqlSession.selectOne(command.getName(), param);</span><br><span class="line">        if (method.returnsOptional() &amp;&amp;</span><br><span class="line">            (result == null || !method.getReturnType().equals(result.getClass()))) &#123;</span><br><span class="line">          result = Optional.ofNullable(result);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      break;</span><br><span class="line">    case FLUSH:</span><br><span class="line">      result = sqlSession.flushStatements();</span><br><span class="line">      break;</span><br><span class="line">    default:</span><br><span class="line">      throw new BindingException(&quot;Unknown execution method for: &quot; + command.getName());</span><br><span class="line">  &#125;</span><br><span class="line">  if (result == null &amp;&amp; method.getReturnType().isPrimitive() &amp;&amp; !method.returnsVoid()) &#123;</span><br><span class="line">    throw new BindingException(&quot;Mapper method &apos;&quot; + command.getName() </span><br><span class="line">        + &quot; attempted to return null from a method with a primitive return type (&quot; + method.getReturnType() + &quot;).&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们测试类是select方法,在switch中找到select,首先判断该方法返回时是否为空并且是否有结果集处理器.是否会返回多条数据.可以如果是查询单个,用的是sqlSession.selectOne方法.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public &lt;T&gt; T selectOne(String statement, Object parameter) &#123;</span><br><span class="line">  // Popular vote was to return null on 0 results and throw exception on too many.</span><br><span class="line">  List&lt;T&gt; list = this.&lt;T&gt;selectList(statement, parameter);</span><br><span class="line">  if (list.size() == 1) &#123;</span><br><span class="line">    return list.get(0);</span><br><span class="line">  &#125; else if (list.size() &gt; 1) &#123;</span><br><span class="line">    throw new TooManyResultsException(&quot;Expected one result (or null) to be returned by selectOne(), but found: &quot; + list.size());</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    return null;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它会调用selectList方法,如果list中只有一个数据,会返回第0个,否则,报异常或者返回null.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public &lt;E&gt; List&lt;E&gt; selectList(String statement, Object parameter, RowBounds rowBounds) &#123;</span><br><span class="line">  try &#123;</span><br><span class="line">    MappedStatement ms = configuration.getMappedStatement(statement);</span><br><span class="line">    return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);</span><br><span class="line">  &#125; catch (Exception e) &#123;</span><br><span class="line">    throw ExceptionFactory.wrapException(&quot;Error querying database.  Cause: &quot; + e, e);</span><br><span class="line">  &#125; finally &#123;</span><br><span class="line">    ErrorContext.instance().reset();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>selectList底层,会调用query方法.</p>
+<p>其中,MappedStatement:映射语句对象,封装了一个元素节点(insert|update|delete|select)的信息.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public &lt;E&gt; List&lt;E&gt; query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)</span><br><span class="line">    throws SQLException &#123;</span><br><span class="line">  Cache cache = ms.getCache();</span><br><span class="line">  if (cache != null) &#123;</span><br><span class="line">    flushCacheIfRequired(ms);</span><br><span class="line">    if (ms.isUseCache() &amp;&amp; resultHandler == null) &#123;</span><br><span class="line">      ensureNoOutParams(ms, boundSql);</span><br><span class="line">      @SuppressWarnings(&quot;unchecked&quot;)</span><br><span class="line">      List&lt;E&gt; list = (List&lt;E&gt;) tcm.getObject(cache, key);</span><br><span class="line">      if (list == null) &#123;</span><br><span class="line">        list = delegate.&lt;E&gt; query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);</span><br><span class="line">        tcm.putObject(cache, key, list); // issue #578 and #116</span><br><span class="line">      &#125;</span><br><span class="line">      return list;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return delegate.&lt;E&gt; query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先会从二级缓存中去找,二级缓存中没有.会进入BaseExecutor(底层的执行器)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">  queryStack++;</span><br><span class="line">  list = resultHandler == null ? (List&lt;E&gt;) localCache.getObject(key) : null;</span><br><span class="line">  if (list != null) &#123;</span><br><span class="line">    handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);</span><br><span class="line">  &#125;</span><br><span class="line">&#125; finally &#123;</span><br><span class="line">  queryStack--;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>BaseExecutor会先从一级缓存localCache中去查询,如果没有再查询数据库的.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">private &lt;E&gt; List&lt;E&gt; queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException &#123;</span><br><span class="line">  List&lt;E&gt; list;</span><br><span class="line">  localCache.putObject(key, EXECUTION_PLACEHOLDER);</span><br><span class="line">  try &#123;</span><br><span class="line">    list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);</span><br><span class="line">  &#125; finally &#123;</span><br><span class="line">    localCache.removeObject(key);</span><br><span class="line">  &#125;</span><br><span class="line">  localCache.putObject(key, list);</span><br><span class="line">  if (ms.getStatementType() == StatementType.CALLABLE) &#123;</span><br><span class="line">    localOutputParameterCache.putObject(key, parameter);</span><br><span class="line">  &#125;</span><br><span class="line">  return list;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查询数据库的时候又会调用doQuery方法,</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public &lt;E&gt; List&lt;E&gt; doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException &#123;</span><br><span class="line">  Statement stmt = null;</span><br><span class="line">  try &#123;</span><br><span class="line">    Configuration configuration = ms.getConfiguration();</span><br><span class="line">    StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);</span><br><span class="line">    stmt = prepareStatement(handler, ms.getStatementLog());</span><br><span class="line">    return handler.&lt;E&gt;query(stmt, resultHandler);</span><br><span class="line">  &#125; finally &#123;</span><br><span class="line">    closeStatement(stmt);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>doQuery方法中会去创建一个StatementHandler对象</p>
+<p>StatementHandler:语句处理器,封装了JDBC的DML/DQL操作,参数设置.其实就是一个SQL语句处理器.在创建对象的时候执行pluginAll方法.在创建StatementHandler对象之前,先创建参数处理器和结果集处理器.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/25/README/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/cc.png"
+                alt="cl" />
+            
+              <p class="site-author-name" itemprop="name">cl</p>
+              <p class="site-description motion-element" itemprop="description">厚积薄发</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/CR9C" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="CR752099@163.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="theme-info">
+  主题 -
+  <a class="theme-link" rel="external nofollow" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+**  <span id="busuanzi_container_site_pv" class="theme-info">
+&nbsp;&nbsp;|&nbsp;&nbsp;本站总访问量<span id="busuanzi_value_site_pv"></span>次
+  </span>
+  <span id="busuanzi_container_site_uv" class="theme-info">
+&nbsp;&nbsp;|&nbsp;&nbsp;本站访客数<span id="busuanzi_value_site_uv"></span>人次
+  </span>
+**
+</div>
+
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">cl</span>
+
+  
+</div>
+
+
+  <!-- <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+-->
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("dkPQaRHEXulkoBn932ETqp4K-gzGzoHsz", "PttrdLBCVjdRJVKSk33u82PW");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+
+
+ 
+</body>
+</html>
