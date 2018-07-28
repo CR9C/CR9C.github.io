@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="查看源码时最好用debug一步步调试 最好用debug调试一步步执行 测试类 123456789101112@Testvoid test1() throws Exception &amp;#123;	InputStream in = Resources.getResourceAsStream(&amp;quot;mybatis-config.xml&amp;quot;);	SqlSessionFactoryBuilder">
+<meta name="description" content="查看源码时最好用debug一步步调试 测试类 123456789101112@Testvoid test1() throws Exception &amp;#123;	InputStream in = Resources.getResourceAsStream(&amp;quot;mybatis-config.xml&amp;quot;);	SqlSessionFactoryBuilder builder = new S">
 <meta name="keywords" content="MyBatis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MyBatis执行流程-源码分析">
 <meta property="og:url" content="http://yoursite.com/2018/07/28/Mybatis执行流程-源码分析/index.html">
 <meta property="og:site_name" content="cl&#39;s blog">
-<meta property="og:description" content="查看源码时最好用debug一步步调试 最好用debug调试一步步执行 测试类 123456789101112@Testvoid test1() throws Exception &amp;#123;	InputStream in = Resources.getResourceAsStream(&amp;quot;mybatis-config.xml&amp;quot;);	SqlSessionFactoryBuilder">
+<meta property="og:description" content="查看源码时最好用debug一步步调试 测试类 123456789101112@Testvoid test1() throws Exception &amp;#123;	InputStream in = Resources.getResourceAsStream(&amp;quot;mybatis-config.xml&amp;quot;);	SqlSessionFactoryBuilder builder = new S">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-07-28T13:39:30.605Z">
+<meta property="og:updated_time" content="2018-07-28T13:41:36.084Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MyBatis执行流程-源码分析">
-<meta name="twitter:description" content="查看源码时最好用debug一步步调试 最好用debug调试一步步执行 测试类 123456789101112@Testvoid test1() throws Exception &amp;#123;	InputStream in = Resources.getResourceAsStream(&amp;quot;mybatis-config.xml&amp;quot;);	SqlSessionFactoryBuilder">
+<meta name="twitter:description" content="查看源码时最好用debug一步步调试 测试类 123456789101112@Testvoid test1() throws Exception &amp;#123;	InputStream in = Resources.getResourceAsStream(&amp;quot;mybatis-config.xml&amp;quot;);	SqlSessionFactoryBuilder builder = new S">
 
 
 
@@ -400,7 +400,6 @@
 
       
         <p>查看源码时最好用debug一步步调试</p>
-<p>最好用debug调试一步步执行</p>
 <p>测试类</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">void test1() throws Exception &#123;</span><br><span class="line">	InputStream in = Resources.getResourceAsStream(&quot;mybatis-config.xml&quot;);</span><br><span class="line">	SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();</span><br><span class="line">	SqlSessionFactory factory = builder.build(in);</span><br><span class="line">	SqlSession session = factory.openSession();</span><br><span class="line">	UserMapper mapper = session.getMapper(UserMapper.class);</span><br><span class="line">	List&lt;Map&lt;String,Object&gt;&gt; list = mapper.listMap();</span><br><span class="line">	session.close();</span><br><span class="line">	for (Map&lt;String, Object&gt; map : list) &#123;</span><br><span class="line">		System.out.println(map);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 <p>第一步:  首先先看SqlSessionFactory factory = builder.build(in);,即创建SqlSessionFactory 对象.</p>
